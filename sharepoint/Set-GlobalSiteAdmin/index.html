@@ -8,29 +8,29 @@
       
       
       
-        <link rel="canonical" href="https://emildosen.github.io/m365-toolkit/">
+        <link rel="canonical" href="https://emildosen.github.io/m365-toolkit/sharepoint/Set-GlobalSiteAdmin/">
       
       
+        <link rel="prev" href="../../purview/Parse-AuditLog/">
       
-        <link rel="next" href="entra/Export-AuthenticationMethods/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>M365 Toolkit</title>
+        <title>Set-GlobalSiteAdmin - M365 Toolkit</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#m365-toolkit" class="md-skip">
+        <a href="#set-globalsiteadmin" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="M365 Toolkit" class="md-header__button md-logo" aria-label="M365 Toolkit" data-md-component="logo">
+    <a href="../.." title="M365 Toolkit" class="md-header__button md-logo" aria-label="M365 Toolkit" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Set-GlobalSiteAdmin
             
           </span>
         </div>
@@ -228,7 +228,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="M365 Toolkit" class="md-nav__button md-logo" aria-label="M365 Toolkit" data-md-component="logo">
+    <a href="../.." title="M365 Toolkit" class="md-nav__button md-logo" aria-label="M365 Toolkit" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -255,37 +255,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -301,59 +274,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sections" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sections
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Requirements
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -417,7 +337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="entra/Export-AuthenticationMethods/" class="md-nav__link">
+      <a href="../../entra/Export-AuthenticationMethods/" class="md-nav__link">
         
   
   
@@ -445,7 +365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="entra/Export-ConditionalAccess/" class="md-nav__link">
+      <a href="../../entra/Export-ConditionalAccess/" class="md-nav__link">
         
   
   
@@ -532,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="exchange/Export-EmailAliases/" class="md-nav__link">
+      <a href="../../exchange/Export-EmailAliases/" class="md-nav__link">
         
   
   
@@ -619,7 +539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="purview/Parse-AuditLog/" class="md-nav__link">
+      <a href="../../purview/Parse-AuditLog/" class="md-nav__link">
         
   
   
@@ -651,8 +571,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -663,11 +585,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
@@ -688,7 +610,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -703,10 +625,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="sharepoint/Set-GlobalSiteAdmin/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set-GlobalSiteAdmin
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -722,6 +671,170 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Description
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-adminurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AdminUrl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-appid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AppId
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Tenant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-addadmin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AddAdmin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Cloud
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Site
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -761,10 +874,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sections" class="md-nav__link">
+  <a href="#description" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sections
+        Description
       
     </span>
   </a>
@@ -772,24 +885,135 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Requirements
+        Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-adminurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AdminUrl
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#-appid" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Started
+        -AppId
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Tenant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-addadmin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AddAdmin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Cloud
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Site
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -811,6 +1035,46 @@
   
 
 
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    SharePoint
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
@@ -821,22 +1085,176 @@
   
 
 
-<h1 id="m365-toolkit">M365 Toolkit</h1>
-<p>A collection of PowerShell scripts for Microsoft 365 administration.</p>
-<h2 id="sections">Sections</h2>
-<ul>
-<li><strong>Entra</strong> — Microsoft Entra ID reporting and management</li>
-<li><strong>Exchange</strong> — Exchange Online mailbox and recipient management</li>
-<li><strong>Purview</strong> — Microsoft Purview compliance and audit tools</li>
-<li><strong>SharePoint</strong> — SharePoint Online site administration</li>
-</ul>
-<h2 id="requirements">Requirements</h2>
-<ul>
-<li>PowerShell 7+</li>
-<li>Relevant Microsoft 365 modules (see each script for specifics)</li>
-</ul>
-<h2 id="getting-started">Getting Started</h2>
-<p>Each script supports PowerShell comment-based help. Run <code>Get-Help .\Script-Name.ps1 -Full</code> for detailed usage.</p>
+<h1 id="set-globalsiteadmin">Set-GlobalSiteAdmin</h1>
+<p>Adds a user as site collection administrator to all SharePoint sites in a tenant.</p>
+<h2 id="description">Description</h2>
+<p>Connects to SharePoint Online using PnP PowerShell (interactive auth) and adds the
+specified user as a site collection admin on every site, excluding OneDrive, the
+admin center, and system sites. Results are exported to an Excel report.
+You must have a app registration with appropriate permissions. See:
+https://pnp.github.io/powershell/articles/registerapplication.html</p>
+<h2 id="parameters">Parameters</h2>
+<h3 id="-adminurl">-AdminUrl</h3>
+<p>URL of the SharePoint Admin Center (e.g. https://contoso-admin.sharepoint.com).</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-appid">-AppId</h3>
+<p>Client ID of the Entra ID app registration used for authentication.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-tenant">-Tenant</h3>
+<p>Tenant ID or domain (e.g. contoso.onmicrosoft.com).</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-addadmin">-AddAdmin</h3>
+<p>UPN of the user to add as site collection administrator (e.g. admin@contoso.com).</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-cloud">-Cloud</h3>
+<p>Azure cloud environment. Defaults to 'Production'.
+Accepted values: Production, PPE, China, Germany, USGovernment, USGovernmentHigh, USGovernmentDoD.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>false</td>
+</tr>
+<tr>
+<td>Default</td>
+<td>Production</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-site">-Site</h3>
+<p>Optional. URL of a single site to target. Use for testing before running against all sites.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-out">-Out</h3>
+<p>Optional. Full path for the output Excel report. Defaults to
+~/Downloads/<tenant>-GlobalSiteAdmin-<timestamp>.xlsx.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Required</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples">Examples</h2>
+<h3 id="example-1">EXAMPLE 1</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">.\</span><span class="nb">Set-GlobalSiteAdmin</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-AdminUrl</span> <span class="n">https</span><span class="p">://</span><span class="n">contoso-admin</span><span class="p">.</span><span class="n">sharepoint</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">-AppId</span> <span class="n">00000000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">000000000000</span> <span class="p">`</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">-Tenant</span> <span class="n">contoso</span><span class="p">.</span><span class="n">onmicrosoft</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">-AddAdmin</span> <span class="n">newadmin</span><span class="nv">@contoso</span><span class="p">.</span><span class="n">com</span>
+</code></pre></div>
+<h3 id="example-2">EXAMPLE 2</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">.\</span><span class="nb">Set-GlobalSiteAdmin</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-AdminUrl</span> <span class="n">https</span><span class="p">://</span><span class="n">contoso-admin</span><span class="p">.</span><span class="n">sharepoint</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">-AppId</span> <span class="n">00000000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">0000</span><span class="p">-</span><span class="n">000000000000</span> <span class="p">`</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">-Tenant</span> <span class="n">contoso</span><span class="p">.</span><span class="n">onmicrosoft</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">-AddAdmin</span> <span class="n">newadmin</span><span class="nv">@contoso</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">-Site</span> <span class="n">https</span><span class="p">://</span><span class="n">contoso</span><span class="p">.</span><span class="n">sharepoint</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">sites</span><span class="p">/</span><span class="n">TestSite</span>
+</code></pre></div>
+<p>Requires -Modules PnP.PowerShell, ImportExcel</p>
 
 
 
@@ -886,10 +1304,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "navigation.path", "search.highlight", "search.suggest"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.path", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

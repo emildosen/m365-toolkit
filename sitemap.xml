@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/entra/Export-AuthenticationMethods/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/entra/Export-ConditionalAccess/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/exchange/Export-EmailAliases/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/purview/Parse-AuditLog/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://emildosen.github.io/m365-toolkit/sharepoint/Set-GlobalSiteAdmin/</loc>
+         <lastmod>2026-03-30</lastmod>
+    </url>
+</urlset>
