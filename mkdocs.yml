@@ -6,7 +6,6 @@ repo_name: emildosen/m365-toolkit
 theme:
   name: material
   features:
-    - navigation.sections
     - navigation.path
     - search.highlight
     - search.suggest

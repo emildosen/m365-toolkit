@@ -1,4 +1,4 @@
-## Various Excel import/export snippets
+## Various Excel export snippets
 
 ### Params
 -AutoSize       Automatically size column width to fit content
