@@ -1,3 +1,35 @@
+<#
+.SYNOPSIS
+    Exports user authentication methods and tenant policy settings to an Excel report.
+
+.DESCRIPTION
+    Connects to Microsoft Graph and retrieves all users' registered authentication methods,
+    sign-in preferences, and tenant-level authentication method policy configurations.
+    Outputs an Excel workbook with two sheets: a Summary (method usage counts and tenant
+    policy state) and a Details sheet (one row per user with a Boolean column per method).
+
+.PARAMETER GraphCloud
+    The Microsoft Graph national cloud environment to connect to.
+    Defaults to 'Global'. Accepted values: Global, USGov, USGovDoD, Germany, China.
+
+.PARAMETER Tenant
+    Optional tenant ID or domain to target when authenticating to Microsoft Graph.
+    If omitted, the default tenant for the authenticated account is used.
+
+.PARAMETER Out
+    Optional output path for the Excel file (.xlsx).
+    Defaults to: ~\Downloads\<OrgName>-UserAuthMethods-<timestamp>.xlsx
+
+.EXAMPLE
+    .\Export-AuthenticationMethods.ps1
+
+    Connects to the global cloud and saves the report to the Downloads folder.
+
+.EXAMPLE
+    .\Export-AuthenticationMethods.ps1 -Tenant contoso.onmicrosoft.com -Out C:\Reports\auth.xlsx
+
+    Targets a specific tenant and writes the report to a custom path.
+#>
 #Requires -Modules Microsoft.Graph.Authentication, ImportExcel
 
 [CmdletBinding()]
