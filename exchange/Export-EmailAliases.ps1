@@ -10,6 +10,7 @@
 
 .PARAMETER ExchangeCloud
     The Exchange Online environment to connect to. Defaults to 'O365Default'.
+    Accepted values: O365Default, O365USGovGCCHigh, O365USGovDoD, O365GermanyCloud, O365China
 
 .PARAMETER Tenant
     Optional. The organization domain or tenant ID to pass to Connect-ExchangeOnline.
