@@ -4,6 +4,7 @@ A collection of PowerShell scripts for Microsoft 365 administration.
 
 ## Requirements
 
+- Windows OS
 - PowerShell 7+
 - Modules: `Microsoft.Graph`, `ExchangeOnlineManagement`, `PnP.PowerShell`, `ImportExcel`
 
