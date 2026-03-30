@@ -117,7 +117,10 @@ foreach ($section in $sections) {
         }
 
         # Full script source
+        $rawUrl = "https://raw.githubusercontent.com/emildosen/m365-toolkit/main/$section/$($script.Name)"
         $lines.Add('## Script')
+        $lines.Add('')
+        $lines.Add("[Download $($script.Name)]($rawUrl){ .md-button }")
         $lines.Add('')
         $lines.Add('```powershell')
         $lines.Add((Get-Content $script.FullName -Raw).TrimEnd())
