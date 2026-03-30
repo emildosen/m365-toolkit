@@ -116,6 +116,14 @@ foreach ($section in $sections) {
             }
         }
 
+        # Full script source
+        $lines.Add('## Script')
+        $lines.Add('')
+        $lines.Add('```powershell')
+        $lines.Add((Get-Content $script.FullName -Raw).TrimEnd())
+        $lines.Add('```')
+        $lines.Add('')
+
         $outFile = Join-Path $outputDir "$name.md"
         $lines -join "`n" | Set-Content $outFile -Encoding UTF8 -NoNewline
         Write-Host "  -> $outFile"
