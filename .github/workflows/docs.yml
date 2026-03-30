@@ -1,0 +1,43 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.ps1'
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/docs.yml'
+      - '.github/scripts/Generate-Docs.ps1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Markdown from PowerShell help
+        shell: pwsh
+        run: .github/scripts/Generate-Docs.ps1 -RepoRoot . -DocsRoot docs
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install MkDocs dependencies
+        run: pip install mkdocs-material mkdocs-awesome-pages-plugin
+
+      - name: Configure git
+        run: |
+          git config user.name "Docs Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy to docs branch
+        run: mkdocs gh-deploy --force --remote-branch docs

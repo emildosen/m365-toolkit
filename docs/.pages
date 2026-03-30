@@ -1,0 +1,6 @@
+nav:
+  - Home: index.md
+  - Entra: entra
+  - Exchange: exchange
+  - Purview: purview
+  - SharePoint: sharepoint
