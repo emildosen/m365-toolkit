@@ -8,6 +8,7 @@ A collection of PowerShell scripts for Microsoft 365 administration.
 - **Exchange** — Exchange Online mailbox and recipient management
 - **Purview** — Microsoft Purview compliance and audit tools
 - **SharePoint** — SharePoint Online site administration
+- **Development** — Standards and reusable code snippets
 
 ## Requirements
 
