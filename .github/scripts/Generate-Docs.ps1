@@ -4,7 +4,7 @@ param(
     [string]$DocsRoot = './docs'
 )
 
-$sections = @('entra', 'exchange', 'purview', 'sharepoint')
+$sections = @('entra', 'exchange', 'm365', 'purview', 'sharepoint')
 
 $skipParams = @(
     'Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction',
