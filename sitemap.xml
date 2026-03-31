@@ -2,46 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/development/Export-Excel/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/development/Naming/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/development/Params/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/entra/Export-AppPermissions/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/entra/Export-AuthenticationMethods/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/entra/Export-ConditionalAccess/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/exchange/Export-EmailAliases/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/exchange/Export-MailboxStats/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/purview/Parse-AuditLog/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
     <url>
          <loc>https://emildosen.github.io/m365-toolkit/sharepoint/Set-GlobalSiteAdmin/</loc>
-         <lastmod>2026-03-30</lastmod>
+         <lastmod>2026-03-31</lastmod>
     </url>
 </urlset>
