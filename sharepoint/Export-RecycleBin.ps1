@@ -1,5 +1,3 @@
-#Requires -Modules PnP.PowerShell, ImportExcel
-
 <#
 .SYNOPSIS
     Exports SharePoint site recycle bin contents to an Excel report.
@@ -48,6 +46,7 @@
 .EXAMPLE
     .\Export-RecycleBin.ps1 -Url "https://contoso.sharepoint.com" -AppId "00000000-0000-0000-0000-000000000000" -Tenant "contoso.onmicrosoft.com" -Start "2025-10-01" -End "2025-10-31" -DeletedBy "user@contoso.com"
 #>
+#Requires -Modules PnP.PowerShell, ImportExcel
 
 [CmdletBinding()]
 param(
