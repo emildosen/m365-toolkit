@@ -14,7 +14,7 @@
         <link rel="prev" href="../../purview/Parse-AuditLog/">
       
       
-        <link rel="next" href="../Set-GlobalSiteAdmin/">
+        <link rel="next" href="../Find-EmptyFolders/">
       
       
         
@@ -989,6 +989,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../Find-EmptyFolders/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Find-EmptyFolders
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Set-GlobalSiteAdmin/" class="md-nav__link">
         
   
@@ -1602,226 +1630,226 @@ Accepts PowerShell datetime strings. Can be used individually or combined with -
 <h3 id="example-2">EXAMPLE 2</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">.\</span><span class="nb">Export-RecycleBin</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Url</span> <span class="s2">&quot;https://contoso.sharepoint.com&quot;</span> <span class="n">-AppId</span> <span class="s2">&quot;00000000-0000-0000-0000-000000000000&quot;</span> <span class="n">-Tenant</span> <span class="s2">&quot;contoso.onmicrosoft.com&quot;</span> <span class="n">-Start</span> <span class="s2">&quot;2025-10-01&quot;</span> <span class="n">-End</span> <span class="s2">&quot;2025-10-31&quot;</span> <span class="n">-DeletedBy</span> <span class="s2">&quot;user@contoso.com&quot;</span>
 </code></pre></div>
+<p>Requires -Modules PnP.PowerShell, ImportExcel</p>
 <h2 id="script">Script</h2>
 <p><a class="md-button" href="https://raw.githubusercontent.com/emildosen/m365-toolkit/main/sharepoint/Export-RecycleBin.ps1">Download Export-RecycleBin.ps1</a></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c">#Requires -Modules PnP.PowerShell, ImportExcel</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cm">&lt;#</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="sd">.SYNOPSIS</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="cm">    Exports SharePoint site recycle bin contents to an Excel report.</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="sd">.DESCRIPTION</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cm">    Connects to a SharePoint site via PnP PowerShell and retrieves all recycle bin items,</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cm">    exporting them to an Excel workbook with Summary and Details worksheets.</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cm">    Supports optional filtering by deletion date range and/or the user who deleted the item.</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="cm">    Date/time values are converted to local time for display. The report is saved to the</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="cm">    user&#39;s Downloads folder by default.</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="sd">.PARAMETER</span><span class="cm"> Url</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="cm">    The SharePoint site URL to connect to. Must start with http:// or https://.</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="sd">.PARAMETER</span><span class="cm"> AppId</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="cm">    The Entra ID app registration (client) ID used for authentication.</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="sd">.PARAMETER</span><span class="cm"> Tenant</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="cm">    The tenant domain (e.g. contoso.onmicrosoft.com).</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="sd">.PARAMETER</span><span class="cm"> Cloud</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="cm">    The Azure cloud environment to connect to. Defaults to &#39;Production&#39;.</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="cm">    Valid values: Production, PPE, China, Germany, USGovernment, USGovernmentHigh, USGovernmentDoD.</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="sd">.PARAMETER</span><span class="cm"> Out</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="cm">    Optional output file path for the Excel report. If omitted, the report is saved to</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="cm">    the user&#39;s Downloads folder with a timestamped filename. A .xlsx extension is appended</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="cm">    if not provided.</span>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>
-<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="sd">.PARAMETER</span><span class="cm"> DeletedBy</span>
-<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="cm">    Optional filter by the email address/UPN of the user who deleted the item.</span>
-<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>
-<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="sd">.PARAMETER</span><span class="cm"> Start</span>
-<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="cm">    Optional start date/time filter. Only items deleted on or after this date are included.</span>
-<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="cm">    Accepts PowerShell datetime strings (e.g. &quot;2025-10-30 18:00&quot;, &quot;2025-10-30&quot;, &quot;2025-10-30T18:00&quot;).</span>
-<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="cm">    Can be used individually or combined with -End to define a range.</span>
-<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a>
-<a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a><span class="sd">.PARAMETER</span><span class="cm"> End</span>
-<a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a><span class="cm">    Optional end date/time filter. Only items deleted on or before this date are included.</span>
-<a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a><span class="cm">    If a date-only value is provided, it is treated as end-of-day for inclusive comparison.</span>
-<a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a><span class="cm">    Accepts PowerShell datetime strings. Can be used individually or combined with -Start.</span>
-<a id="__codelineno-2-44" name="__codelineno-2-44" href="#__codelineno-2-44"></a>
-<a id="__codelineno-2-45" name="__codelineno-2-45" href="#__codelineno-2-45"></a><span class="sd">.EXAMPLE</span>
-<a id="__codelineno-2-46" name="__codelineno-2-46" href="#__codelineno-2-46"></a><span class="cm">    .\Export-RecycleBin.ps1 -Url &quot;https://contoso.sharepoint.com/sites/HR&quot; -AppId &quot;00000000-0000-0000-0000-000000000000&quot; -Tenant &quot;contoso.onmicrosoft.com&quot;</span>
-<a id="__codelineno-2-47" name="__codelineno-2-47" href="#__codelineno-2-47"></a>
-<a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a><span class="sd">.EXAMPLE</span>
-<a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a><span class="cm">    .\Export-RecycleBin.ps1 -Url &quot;https://contoso.sharepoint.com&quot; -AppId &quot;00000000-0000-0000-0000-000000000000&quot; -Tenant &quot;contoso.onmicrosoft.com&quot; -Start &quot;2025-10-01&quot; -End &quot;2025-10-31&quot; -DeletedBy &quot;user@contoso.com&quot;</span>
-<a id="__codelineno-2-50" name="__codelineno-2-50" href="#__codelineno-2-50"></a><span class="cm">#&gt;</span>
-<a id="__codelineno-2-51" name="__codelineno-2-51" href="#__codelineno-2-51"></a>
-<a id="__codelineno-2-52" name="__codelineno-2-52" href="#__codelineno-2-52"></a><span class="p">[</span><span class="k">CmdletBinding</span><span class="p">()]</span>
-<a id="__codelineno-2-53" name="__codelineno-2-53" href="#__codelineno-2-53"></a><span class="k">param</span><span class="p">(</span>
-<a id="__codelineno-2-54" name="__codelineno-2-54" href="#__codelineno-2-54"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
-<a id="__codelineno-2-55" name="__codelineno-2-55" href="#__codelineno-2-55"></a>    <span class="p">[</span><span class="k">ValidatePattern</span><span class="p">(</span><span class="s1">&#39;^https?://&#39;</span><span class="p">)]</span>
-<a id="__codelineno-2-56" name="__codelineno-2-56" href="#__codelineno-2-56"></a>    <span class="no">[string]</span><span class="nv">$Url</span><span class="p">,</span>
-<a id="__codelineno-2-57" name="__codelineno-2-57" href="#__codelineno-2-57"></a>
-<a id="__codelineno-2-58" name="__codelineno-2-58" href="#__codelineno-2-58"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
-<a id="__codelineno-2-59" name="__codelineno-2-59" href="#__codelineno-2-59"></a>    <span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span>
-<a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a>    <span class="no">[string]</span><span class="nv">$AppId</span><span class="p">,</span>
-<a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a>
-<a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
-<a id="__codelineno-2-63" name="__codelineno-2-63" href="#__codelineno-2-63"></a>    <span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span>
-<a id="__codelineno-2-64" name="__codelineno-2-64" href="#__codelineno-2-64"></a>    <span class="no">[string]</span><span class="nv">$Tenant</span><span class="p">,</span>
-<a id="__codelineno-2-65" name="__codelineno-2-65" href="#__codelineno-2-65"></a>
-<a id="__codelineno-2-66" name="__codelineno-2-66" href="#__codelineno-2-66"></a>    <span class="p">[</span><span class="k">ValidateSet</span><span class="p">(</span><span class="s1">&#39;Production&#39;</span><span class="p">,</span> <span class="s1">&#39;PPE&#39;</span><span class="p">,</span> <span class="s1">&#39;China&#39;</span><span class="p">,</span> <span class="s1">&#39;Germany&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernment&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernmentHigh&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernmentDoD&#39;</span><span class="p">)]</span>
-<a id="__codelineno-2-67" name="__codelineno-2-67" href="#__codelineno-2-67"></a>    <span class="no">[string]</span><span class="nv">$Cloud</span> <span class="p">=</span> <span class="s1">&#39;Production&#39;</span><span class="p">,</span>
-<a id="__codelineno-2-68" name="__codelineno-2-68" href="#__codelineno-2-68"></a>
-<a id="__codelineno-2-69" name="__codelineno-2-69" href="#__codelineno-2-69"></a>    <span class="no">[string]</span><span class="nv">$Out</span><span class="p">,</span>
-<a id="__codelineno-2-70" name="__codelineno-2-70" href="#__codelineno-2-70"></a>    <span class="no">[string]</span><span class="nv">$DeletedBy</span><span class="p">,</span>
-<a id="__codelineno-2-71" name="__codelineno-2-71" href="#__codelineno-2-71"></a>    <span class="no">[datetime]</span><span class="nv">$Start</span><span class="p">,</span>
-<a id="__codelineno-2-72" name="__codelineno-2-72" href="#__codelineno-2-72"></a>    <span class="no">[datetime]</span><span class="nv">$End</span>
-<a id="__codelineno-2-73" name="__codelineno-2-73" href="#__codelineno-2-73"></a><span class="p">)</span>
-<a id="__codelineno-2-74" name="__codelineno-2-74" href="#__codelineno-2-74"></a>
-<a id="__codelineno-2-75" name="__codelineno-2-75" href="#__codelineno-2-75"></a><span class="k">function</span> <span class="n">Log</span> <span class="p">{</span> <span class="k">param</span><span class="p">(</span><span class="no">[string]</span><span class="nv">$Msg</span><span class="p">,</span> <span class="no">[ConsoleColor]</span><span class="nv">$Color</span> <span class="p">=</span> <span class="s1">&#39;White&#39;</span><span class="p">)</span> <span class="nb">Write-Host</span> <span class="s2">&quot;[</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s1">&#39;HH:mm&#39;</span><span class="p">)</span><span class="s2">] $Msg&quot;</span> <span class="n">-ForegroundColor</span> <span class="nv">$Color</span> <span class="p">}</span>
-<a id="__codelineno-2-76" name="__codelineno-2-76" href="#__codelineno-2-76"></a>
-<a id="__codelineno-2-77" name="__codelineno-2-77" href="#__codelineno-2-77"></a><span class="n">Log</span> <span class="s2">&quot;Connecting to SharePoint Admin...&quot;</span>
-<a id="__codelineno-2-78" name="__codelineno-2-78" href="#__codelineno-2-78"></a><span class="nb">Connect-PnPOnline</span> <span class="n">-Url</span> <span class="nv">$Url</span> <span class="n">-ClientId</span> <span class="nv">$AppId</span> <span class="n">-Interactive</span> <span class="n">-Tenant</span> <span class="nv">$Tenant</span> <span class="n">-AzureEnvironment</span> <span class="nv">$Cloud</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
-<a id="__codelineno-2-79" name="__codelineno-2-79" href="#__codelineno-2-79"></a>
-<a id="__codelineno-2-80" name="__codelineno-2-80" href="#__codelineno-2-80"></a><span class="nv">$tenantName</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$Tenant</span><span class="p">.</span><span class="n">Trim</span><span class="p">()</span> <span class="n">-split</span> <span class="s1">&#39;\.&#39;</span><span class="p">)[</span><span class="n">0</span><span class="p">]</span>
-<a id="__codelineno-2-81" name="__codelineno-2-81" href="#__codelineno-2-81"></a><span class="n">Log</span> <span class="s2">&quot;Connected to $tenantName PnP&quot;</span> <span class="n">Green</span>
-<a id="__codelineno-2-82" name="__codelineno-2-82" href="#__codelineno-2-82"></a>
-<a id="__codelineno-2-83" name="__codelineno-2-83" href="#__codelineno-2-83"></a><span class="k">if</span> <span class="p">(!</span><span class="nv">$Out</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-84" name="__codelineno-2-84" href="#__codelineno-2-84"></a>    <span class="nv">$friendlyName</span> <span class="p">=</span> <span class="s2">&quot;RecycleBin&quot;</span>
-<a id="__codelineno-2-85" name="__codelineno-2-85" href="#__codelineno-2-85"></a>    <span class="nv">$Out</span> <span class="p">=</span> <span class="nb">Join-Path</span> <span class="nv">$env:USERPROFILE</span> <span class="s2">&quot;Downloads\$tenantName-$friendlyName-</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s1">&#39;yyyy-MM-dd_HH-mm&#39;</span><span class="p">)</span><span class="s2">.xlsx&quot;</span>
-<a id="__codelineno-2-86" name="__codelineno-2-86" href="#__codelineno-2-86"></a><span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$Out</span> <span class="o">-notlike</span> <span class="s1">&#39;*.xlsx&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$Out</span> <span class="p">+=</span> <span class="s1">&#39;.xlsx&#39;</span> <span class="p">}</span>
-<a id="__codelineno-2-87" name="__codelineno-2-87" href="#__codelineno-2-87"></a>
-<a id="__codelineno-2-88" name="__codelineno-2-88" href="#__codelineno-2-88"></a><span class="c"># Get current site server-relative URL so we can strip it from item paths</span>
-<a id="__codelineno-2-89" name="__codelineno-2-89" href="#__codelineno-2-89"></a><span class="c"># Example: &quot;/&quot; (root site) OR &quot;/sites/HR&quot; (non-root)</span>
-<a id="__codelineno-2-90" name="__codelineno-2-90" href="#__codelineno-2-90"></a><span class="nv">$web</span> <span class="p">=</span> <span class="nb">Get-PnPWeb</span> <span class="n">-Includes</span> <span class="n">ServerRelativeUrl</span><span class="p">,</span> <span class="n">Title</span>
-<a id="__codelineno-2-91" name="__codelineno-2-91" href="#__codelineno-2-91"></a><span class="nv">$siteRel</span> <span class="p">=</span> <span class="nv">$web</span><span class="p">.</span><span class="n">ServerRelativeUrl</span>           <span class="c"># e.g. &quot;/&quot; or &quot;/sites/SiteName&quot;</span>
-<a id="__codelineno-2-92" name="__codelineno-2-92" href="#__codelineno-2-92"></a><span class="nv">$siteRelTrim</span> <span class="p">=</span> <span class="nv">$siteRel</span><span class="p">.</span><span class="n">Trim</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>           <span class="c"># &quot;&quot; or &quot;sites/SiteName&quot;</span>
-<a id="__codelineno-2-93" name="__codelineno-2-93" href="#__codelineno-2-93"></a><span class="nv">$siteName</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="nv">$web</span><span class="p">.</span><span class="n">Title</span><span class="p">))</span> <span class="p">{</span> <span class="s2">&quot;(root)&quot;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="nv">$web</span><span class="p">.</span><span class="n">Title</span> <span class="p">}</span>
-<a id="__codelineno-2-94" name="__codelineno-2-94" href="#__codelineno-2-94"></a>
-<a id="__codelineno-2-95" name="__codelineno-2-95" href="#__codelineno-2-95"></a><span class="k">function</span> <span class="nb">Remove-SitePrefix</span> <span class="p">{</span>
-<a id="__codelineno-2-96" name="__codelineno-2-96" href="#__codelineno-2-96"></a>    <span class="p">[</span><span class="k">CmdletBinding</span><span class="p">()]</span>
-<a id="__codelineno-2-97" name="__codelineno-2-97" href="#__codelineno-2-97"></a>    <span class="k">param</span><span class="p">([</span><span class="k">Parameter</span><span class="p">()]</span> <span class="no">[string]</span><span class="nv">$Path</span><span class="p">)</span>
-<a id="__codelineno-2-98" name="__codelineno-2-98" href="#__codelineno-2-98"></a>    <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$Path</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$Path</span> <span class="p">}</span>
-<a id="__codelineno-2-99" name="__codelineno-2-99" href="#__codelineno-2-99"></a>    <span class="nv">$p</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$Path</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="n">TrimStart</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>      <span class="c"># normalize slashes and leading &quot;/&quot;</span>
-<a id="__codelineno-2-100" name="__codelineno-2-100" href="#__codelineno-2-100"></a>    <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$siteRelTrim</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$p</span> <span class="p">}</span>   <span class="c"># root site: nothing to strip</span>
-<a id="__codelineno-2-101" name="__codelineno-2-101" href="#__codelineno-2-101"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span> <span class="o">-eq</span> <span class="nv">$siteRelTrim</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span> <span class="p">}</span>
-<a id="__codelineno-2-102" name="__codelineno-2-102" href="#__codelineno-2-102"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span><span class="p">.</span><span class="n">StartsWith</span><span class="p">(</span><span class="s2">&quot;$siteRelTrim/&quot;</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$p</span><span class="p">.</span><span class="n">Substring</span><span class="p">(</span><span class="nv">$siteRelTrim</span><span class="p">.</span><span class="n">Length</span> <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">}</span>
-<a id="__codelineno-2-103" name="__codelineno-2-103" href="#__codelineno-2-103"></a>    <span class="k">return</span> <span class="nv">$p</span>
-<a id="__codelineno-2-104" name="__codelineno-2-104" href="#__codelineno-2-104"></a><span class="p">}</span>
-<a id="__codelineno-2-105" name="__codelineno-2-105" href="#__codelineno-2-105"></a>
-<a id="__codelineno-2-106" name="__codelineno-2-106" href="#__codelineno-2-106"></a><span class="k">function</span> <span class="nb">Get-LocalDeletedDate</span><span class="p">(</span><span class="no">[datetime]</span><span class="nv">$utcDate</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-107" name="__codelineno-2-107" href="#__codelineno-2-107"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$utcDate</span><span class="p">.</span><span class="n">Kind</span> <span class="o">-eq</span> <span class="no">[System.DateTimeKind]</span><span class="p">::</span><span class="n">Utc</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-108" name="__codelineno-2-108" href="#__codelineno-2-108"></a>        <span class="k">return</span> <span class="nv">$utcDate</span><span class="p">.</span><span class="n">ToLocalTime</span><span class="p">()</span>
-<a id="__codelineno-2-109" name="__codelineno-2-109" href="#__codelineno-2-109"></a>    <span class="p">}</span>
-<a id="__codelineno-2-110" name="__codelineno-2-110" href="#__codelineno-2-110"></a>    <span class="k">else</span> <span class="p">{</span>
-<a id="__codelineno-2-111" name="__codelineno-2-111" href="#__codelineno-2-111"></a>        <span class="k">return</span> <span class="no">[datetime]</span><span class="p">::</span><span class="n">SpecifyKind</span><span class="p">(</span><span class="nv">$utcDate</span><span class="p">,</span> <span class="no">[System.DateTimeKind]</span><span class="p">::</span><span class="n">Utc</span><span class="p">).</span><span class="n">ToLocalTime</span><span class="p">()</span>
-<a id="__codelineno-2-112" name="__codelineno-2-112" href="#__codelineno-2-112"></a>    <span class="p">}</span>
-<a id="__codelineno-2-113" name="__codelineno-2-113" href="#__codelineno-2-113"></a><span class="p">}</span>
-<a id="__codelineno-2-114" name="__codelineno-2-114" href="#__codelineno-2-114"></a>
-<a id="__codelineno-2-115" name="__codelineno-2-115" href="#__codelineno-2-115"></a><span class="c"># Normalize date-only End to end-of-day for inclusive comparisons</span>
-<a id="__codelineno-2-116" name="__codelineno-2-116" href="#__codelineno-2-116"></a><span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$End</span><span class="p">.</span><span class="n">TimeOfDay</span> <span class="o">-eq</span> <span class="no">[TimeSpan]</span><span class="p">::</span><span class="n">Zero</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-117" name="__codelineno-2-117" href="#__codelineno-2-117"></a>    <span class="nv">$End</span> <span class="p">=</span> <span class="nv">$End</span><span class="p">.</span><span class="n">Date</span><span class="p">.</span><span class="n">AddDays</span><span class="p">(</span><span class="n">1</span><span class="p">).</span><span class="n">AddMilliseconds</span><span class="p">(-</span><span class="n">1</span><span class="p">)</span>
-<a id="__codelineno-2-118" name="__codelineno-2-118" href="#__codelineno-2-118"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cm">&lt;#</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="sd">.SYNOPSIS</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cm">    Exports SharePoint site recycle bin contents to an Excel report.</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">.DESCRIPTION</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cm">    Connects to a SharePoint site via PnP PowerShell and retrieves all recycle bin items,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cm">    exporting them to an Excel workbook with Summary and Details worksheets.</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cm">    Supports optional filtering by deletion date range and/or the user who deleted the item.</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cm">    Date/time values are converted to local time for display. The report is saved to the</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cm">    user&#39;s Downloads folder by default.</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="sd">.PARAMETER</span><span class="cm"> Url</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="cm">    The SharePoint site URL to connect to. Must start with http:// or https://.</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="sd">.PARAMETER</span><span class="cm"> AppId</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="cm">    The Entra ID app registration (client) ID used for authentication.</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="sd">.PARAMETER</span><span class="cm"> Tenant</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="cm">    The tenant domain (e.g. contoso.onmicrosoft.com).</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="sd">.PARAMETER</span><span class="cm"> Cloud</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="cm">    The Azure cloud environment to connect to. Defaults to &#39;Production&#39;.</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="cm">    Valid values: Production, PPE, China, Germany, USGovernment, USGovernmentHigh, USGovernmentDoD.</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="sd">.PARAMETER</span><span class="cm"> Out</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="cm">    Optional output file path for the Excel report. If omitted, the report is saved to</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="cm">    the user&#39;s Downloads folder with a timestamped filename. A .xlsx extension is appended</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="cm">    if not provided.</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="sd">.PARAMETER</span><span class="cm"> DeletedBy</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="cm">    Optional filter by the email address/UPN of the user who deleted the item.</span>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="sd">.PARAMETER</span><span class="cm"> Start</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="cm">    Optional start date/time filter. Only items deleted on or after this date are included.</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="cm">    Accepts PowerShell datetime strings (e.g. &quot;2025-10-30 18:00&quot;, &quot;2025-10-30&quot;, &quot;2025-10-30T18:00&quot;).</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a><span class="cm">    Can be used individually or combined with -End to define a range.</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a>
+<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a><span class="sd">.PARAMETER</span><span class="cm"> End</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a><span class="cm">    Optional end date/time filter. Only items deleted on or before this date are included.</span>
+<a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a><span class="cm">    If a date-only value is provided, it is treated as end-of-day for inclusive comparison.</span>
+<a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a><span class="cm">    Accepts PowerShell datetime strings. Can be used individually or combined with -Start.</span>
+<a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a>
+<a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a><span class="sd">.EXAMPLE</span>
+<a id="__codelineno-2-44" name="__codelineno-2-44" href="#__codelineno-2-44"></a><span class="cm">    .\Export-RecycleBin.ps1 -Url &quot;https://contoso.sharepoint.com/sites/HR&quot; -AppId &quot;00000000-0000-0000-0000-000000000000&quot; -Tenant &quot;contoso.onmicrosoft.com&quot;</span>
+<a id="__codelineno-2-45" name="__codelineno-2-45" href="#__codelineno-2-45"></a>
+<a id="__codelineno-2-46" name="__codelineno-2-46" href="#__codelineno-2-46"></a><span class="sd">.EXAMPLE</span>
+<a id="__codelineno-2-47" name="__codelineno-2-47" href="#__codelineno-2-47"></a><span class="cm">    .\Export-RecycleBin.ps1 -Url &quot;https://contoso.sharepoint.com&quot; -AppId &quot;00000000-0000-0000-0000-000000000000&quot; -Tenant &quot;contoso.onmicrosoft.com&quot; -Start &quot;2025-10-01&quot; -End &quot;2025-10-31&quot; -DeletedBy &quot;user@contoso.com&quot;</span>
+<a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a><span class="cm">#&gt;</span>
+<a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a><span class="c">#Requires -Modules PnP.PowerShell, ImportExcel</span>
+<a id="__codelineno-2-50" name="__codelineno-2-50" href="#__codelineno-2-50"></a>
+<a id="__codelineno-2-51" name="__codelineno-2-51" href="#__codelineno-2-51"></a><span class="p">[</span><span class="k">CmdletBinding</span><span class="p">()]</span>
+<a id="__codelineno-2-52" name="__codelineno-2-52" href="#__codelineno-2-52"></a><span class="k">param</span><span class="p">(</span>
+<a id="__codelineno-2-53" name="__codelineno-2-53" href="#__codelineno-2-53"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
+<a id="__codelineno-2-54" name="__codelineno-2-54" href="#__codelineno-2-54"></a>    <span class="p">[</span><span class="k">ValidatePattern</span><span class="p">(</span><span class="s1">&#39;^https?://&#39;</span><span class="p">)]</span>
+<a id="__codelineno-2-55" name="__codelineno-2-55" href="#__codelineno-2-55"></a>    <span class="no">[string]</span><span class="nv">$Url</span><span class="p">,</span>
+<a id="__codelineno-2-56" name="__codelineno-2-56" href="#__codelineno-2-56"></a>
+<a id="__codelineno-2-57" name="__codelineno-2-57" href="#__codelineno-2-57"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
+<a id="__codelineno-2-58" name="__codelineno-2-58" href="#__codelineno-2-58"></a>    <span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span>
+<a id="__codelineno-2-59" name="__codelineno-2-59" href="#__codelineno-2-59"></a>    <span class="no">[string]</span><span class="nv">$AppId</span><span class="p">,</span>
+<a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a>
+<a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a>    <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">Mandatory</span> <span class="p">=</span> <span class="nv">$true</span><span class="p">)]</span>
+<a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a>    <span class="p">[</span><span class="n">ValidateNotNullOrEmpty</span><span class="p">()]</span>
+<a id="__codelineno-2-63" name="__codelineno-2-63" href="#__codelineno-2-63"></a>    <span class="no">[string]</span><span class="nv">$Tenant</span><span class="p">,</span>
+<a id="__codelineno-2-64" name="__codelineno-2-64" href="#__codelineno-2-64"></a>
+<a id="__codelineno-2-65" name="__codelineno-2-65" href="#__codelineno-2-65"></a>    <span class="p">[</span><span class="k">ValidateSet</span><span class="p">(</span><span class="s1">&#39;Production&#39;</span><span class="p">,</span> <span class="s1">&#39;PPE&#39;</span><span class="p">,</span> <span class="s1">&#39;China&#39;</span><span class="p">,</span> <span class="s1">&#39;Germany&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernment&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernmentHigh&#39;</span><span class="p">,</span> <span class="s1">&#39;USGovernmentDoD&#39;</span><span class="p">)]</span>
+<a id="__codelineno-2-66" name="__codelineno-2-66" href="#__codelineno-2-66"></a>    <span class="no">[string]</span><span class="nv">$Cloud</span> <span class="p">=</span> <span class="s1">&#39;Production&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-67" name="__codelineno-2-67" href="#__codelineno-2-67"></a>
+<a id="__codelineno-2-68" name="__codelineno-2-68" href="#__codelineno-2-68"></a>    <span class="no">[string]</span><span class="nv">$Out</span><span class="p">,</span>
+<a id="__codelineno-2-69" name="__codelineno-2-69" href="#__codelineno-2-69"></a>    <span class="no">[string]</span><span class="nv">$DeletedBy</span><span class="p">,</span>
+<a id="__codelineno-2-70" name="__codelineno-2-70" href="#__codelineno-2-70"></a>    <span class="no">[datetime]</span><span class="nv">$Start</span><span class="p">,</span>
+<a id="__codelineno-2-71" name="__codelineno-2-71" href="#__codelineno-2-71"></a>    <span class="no">[datetime]</span><span class="nv">$End</span>
+<a id="__codelineno-2-72" name="__codelineno-2-72" href="#__codelineno-2-72"></a><span class="p">)</span>
+<a id="__codelineno-2-73" name="__codelineno-2-73" href="#__codelineno-2-73"></a>
+<a id="__codelineno-2-74" name="__codelineno-2-74" href="#__codelineno-2-74"></a><span class="k">function</span> <span class="n">Log</span> <span class="p">{</span> <span class="k">param</span><span class="p">(</span><span class="no">[string]</span><span class="nv">$Msg</span><span class="p">,</span> <span class="no">[ConsoleColor]</span><span class="nv">$Color</span> <span class="p">=</span> <span class="s1">&#39;White&#39;</span><span class="p">)</span> <span class="nb">Write-Host</span> <span class="s2">&quot;[</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s1">&#39;HH:mm&#39;</span><span class="p">)</span><span class="s2">] $Msg&quot;</span> <span class="n">-ForegroundColor</span> <span class="nv">$Color</span> <span class="p">}</span>
+<a id="__codelineno-2-75" name="__codelineno-2-75" href="#__codelineno-2-75"></a>
+<a id="__codelineno-2-76" name="__codelineno-2-76" href="#__codelineno-2-76"></a><span class="n">Log</span> <span class="s2">&quot;Connecting to SharePoint Admin...&quot;</span>
+<a id="__codelineno-2-77" name="__codelineno-2-77" href="#__codelineno-2-77"></a><span class="nb">Connect-PnPOnline</span> <span class="n">-Url</span> <span class="nv">$Url</span> <span class="n">-ClientId</span> <span class="nv">$AppId</span> <span class="n">-Interactive</span> <span class="n">-Tenant</span> <span class="nv">$Tenant</span> <span class="n">-AzureEnvironment</span> <span class="nv">$Cloud</span> <span class="n">-ErrorAction</span> <span class="n">Stop</span>
+<a id="__codelineno-2-78" name="__codelineno-2-78" href="#__codelineno-2-78"></a>
+<a id="__codelineno-2-79" name="__codelineno-2-79" href="#__codelineno-2-79"></a><span class="nv">$tenantName</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$Tenant</span><span class="p">.</span><span class="n">Trim</span><span class="p">()</span> <span class="n">-split</span> <span class="s1">&#39;\.&#39;</span><span class="p">)[</span><span class="n">0</span><span class="p">]</span>
+<a id="__codelineno-2-80" name="__codelineno-2-80" href="#__codelineno-2-80"></a><span class="n">Log</span> <span class="s2">&quot;Connected to $tenantName PnP&quot;</span> <span class="n">Green</span>
+<a id="__codelineno-2-81" name="__codelineno-2-81" href="#__codelineno-2-81"></a>
+<a id="__codelineno-2-82" name="__codelineno-2-82" href="#__codelineno-2-82"></a><span class="k">if</span> <span class="p">(!</span><span class="nv">$Out</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-83" name="__codelineno-2-83" href="#__codelineno-2-83"></a>    <span class="nv">$friendlyName</span> <span class="p">=</span> <span class="s2">&quot;RecycleBin&quot;</span>
+<a id="__codelineno-2-84" name="__codelineno-2-84" href="#__codelineno-2-84"></a>    <span class="nv">$Out</span> <span class="p">=</span> <span class="nb">Join-Path</span> <span class="nv">$env:USERPROFILE</span> <span class="s2">&quot;Downloads\$tenantName-$friendlyName-</span><span class="p">$(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s1">&#39;yyyy-MM-dd_HH-mm&#39;</span><span class="p">)</span><span class="s2">.xlsx&quot;</span>
+<a id="__codelineno-2-85" name="__codelineno-2-85" href="#__codelineno-2-85"></a><span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$Out</span> <span class="o">-notlike</span> <span class="s1">&#39;*.xlsx&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$Out</span> <span class="p">+=</span> <span class="s1">&#39;.xlsx&#39;</span> <span class="p">}</span>
+<a id="__codelineno-2-86" name="__codelineno-2-86" href="#__codelineno-2-86"></a>
+<a id="__codelineno-2-87" name="__codelineno-2-87" href="#__codelineno-2-87"></a><span class="c"># Get current site server-relative URL so we can strip it from item paths</span>
+<a id="__codelineno-2-88" name="__codelineno-2-88" href="#__codelineno-2-88"></a><span class="c"># Example: &quot;/&quot; (root site) OR &quot;/sites/HR&quot; (non-root)</span>
+<a id="__codelineno-2-89" name="__codelineno-2-89" href="#__codelineno-2-89"></a><span class="nv">$web</span> <span class="p">=</span> <span class="nb">Get-PnPWeb</span> <span class="n">-Includes</span> <span class="n">ServerRelativeUrl</span><span class="p">,</span> <span class="n">Title</span>
+<a id="__codelineno-2-90" name="__codelineno-2-90" href="#__codelineno-2-90"></a><span class="nv">$siteRel</span> <span class="p">=</span> <span class="nv">$web</span><span class="p">.</span><span class="n">ServerRelativeUrl</span>           <span class="c"># e.g. &quot;/&quot; or &quot;/sites/SiteName&quot;</span>
+<a id="__codelineno-2-91" name="__codelineno-2-91" href="#__codelineno-2-91"></a><span class="nv">$siteRelTrim</span> <span class="p">=</span> <span class="nv">$siteRel</span><span class="p">.</span><span class="n">Trim</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>           <span class="c"># &quot;&quot; or &quot;sites/SiteName&quot;</span>
+<a id="__codelineno-2-92" name="__codelineno-2-92" href="#__codelineno-2-92"></a><span class="nv">$siteName</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrWhiteSpace</span><span class="p">(</span><span class="nv">$web</span><span class="p">.</span><span class="n">Title</span><span class="p">))</span> <span class="p">{</span> <span class="s2">&quot;(root)&quot;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="nv">$web</span><span class="p">.</span><span class="n">Title</span> <span class="p">}</span>
+<a id="__codelineno-2-93" name="__codelineno-2-93" href="#__codelineno-2-93"></a>
+<a id="__codelineno-2-94" name="__codelineno-2-94" href="#__codelineno-2-94"></a><span class="k">function</span> <span class="nb">Remove-SitePrefix</span> <span class="p">{</span>
+<a id="__codelineno-2-95" name="__codelineno-2-95" href="#__codelineno-2-95"></a>    <span class="p">[</span><span class="k">CmdletBinding</span><span class="p">()]</span>
+<a id="__codelineno-2-96" name="__codelineno-2-96" href="#__codelineno-2-96"></a>    <span class="k">param</span><span class="p">([</span><span class="k">Parameter</span><span class="p">()]</span> <span class="no">[string]</span><span class="nv">$Path</span><span class="p">)</span>
+<a id="__codelineno-2-97" name="__codelineno-2-97" href="#__codelineno-2-97"></a>    <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$Path</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$Path</span> <span class="p">}</span>
+<a id="__codelineno-2-98" name="__codelineno-2-98" href="#__codelineno-2-98"></a>    <span class="nv">$p</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$Path</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="n">TrimStart</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>      <span class="c"># normalize slashes and leading &quot;/&quot;</span>
+<a id="__codelineno-2-99" name="__codelineno-2-99" href="#__codelineno-2-99"></a>    <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$siteRelTrim</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$p</span> <span class="p">}</span>   <span class="c"># root site: nothing to strip</span>
+<a id="__codelineno-2-100" name="__codelineno-2-100" href="#__codelineno-2-100"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span> <span class="o">-eq</span> <span class="nv">$siteRelTrim</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span> <span class="p">}</span>
+<a id="__codelineno-2-101" name="__codelineno-2-101" href="#__codelineno-2-101"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span><span class="p">.</span><span class="n">StartsWith</span><span class="p">(</span><span class="s2">&quot;$siteRelTrim/&quot;</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$p</span><span class="p">.</span><span class="n">Substring</span><span class="p">(</span><span class="nv">$siteRelTrim</span><span class="p">.</span><span class="n">Length</span> <span class="p">+</span> <span class="n">1</span><span class="p">)</span> <span class="p">}</span>
+<a id="__codelineno-2-102" name="__codelineno-2-102" href="#__codelineno-2-102"></a>    <span class="k">return</span> <span class="nv">$p</span>
+<a id="__codelineno-2-103" name="__codelineno-2-103" href="#__codelineno-2-103"></a><span class="p">}</span>
+<a id="__codelineno-2-104" name="__codelineno-2-104" href="#__codelineno-2-104"></a>
+<a id="__codelineno-2-105" name="__codelineno-2-105" href="#__codelineno-2-105"></a><span class="k">function</span> <span class="nb">Get-LocalDeletedDate</span><span class="p">(</span><span class="no">[datetime]</span><span class="nv">$utcDate</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-106" name="__codelineno-2-106" href="#__codelineno-2-106"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$utcDate</span><span class="p">.</span><span class="n">Kind</span> <span class="o">-eq</span> <span class="no">[System.DateTimeKind]</span><span class="p">::</span><span class="n">Utc</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-107" name="__codelineno-2-107" href="#__codelineno-2-107"></a>        <span class="k">return</span> <span class="nv">$utcDate</span><span class="p">.</span><span class="n">ToLocalTime</span><span class="p">()</span>
+<a id="__codelineno-2-108" name="__codelineno-2-108" href="#__codelineno-2-108"></a>    <span class="p">}</span>
+<a id="__codelineno-2-109" name="__codelineno-2-109" href="#__codelineno-2-109"></a>    <span class="k">else</span> <span class="p">{</span>
+<a id="__codelineno-2-110" name="__codelineno-2-110" href="#__codelineno-2-110"></a>        <span class="k">return</span> <span class="no">[datetime]</span><span class="p">::</span><span class="n">SpecifyKind</span><span class="p">(</span><span class="nv">$utcDate</span><span class="p">,</span> <span class="no">[System.DateTimeKind]</span><span class="p">::</span><span class="n">Utc</span><span class="p">).</span><span class="n">ToLocalTime</span><span class="p">()</span>
+<a id="__codelineno-2-111" name="__codelineno-2-111" href="#__codelineno-2-111"></a>    <span class="p">}</span>
+<a id="__codelineno-2-112" name="__codelineno-2-112" href="#__codelineno-2-112"></a><span class="p">}</span>
+<a id="__codelineno-2-113" name="__codelineno-2-113" href="#__codelineno-2-113"></a>
+<a id="__codelineno-2-114" name="__codelineno-2-114" href="#__codelineno-2-114"></a><span class="c"># Normalize date-only End to end-of-day for inclusive comparisons</span>
+<a id="__codelineno-2-115" name="__codelineno-2-115" href="#__codelineno-2-115"></a><span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$End</span><span class="p">.</span><span class="n">TimeOfDay</span> <span class="o">-eq</span> <span class="no">[TimeSpan]</span><span class="p">::</span><span class="n">Zero</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-116" name="__codelineno-2-116" href="#__codelineno-2-116"></a>    <span class="nv">$End</span> <span class="p">=</span> <span class="nv">$End</span><span class="p">.</span><span class="n">Date</span><span class="p">.</span><span class="n">AddDays</span><span class="p">(</span><span class="n">1</span><span class="p">).</span><span class="n">AddMilliseconds</span><span class="p">(-</span><span class="n">1</span><span class="p">)</span>
+<a id="__codelineno-2-117" name="__codelineno-2-117" href="#__codelineno-2-117"></a><span class="p">}</span>
+<a id="__codelineno-2-118" name="__codelineno-2-118" href="#__codelineno-2-118"></a>
 <a id="__codelineno-2-119" name="__codelineno-2-119" href="#__codelineno-2-119"></a>
-<a id="__codelineno-2-120" name="__codelineno-2-120" href="#__codelineno-2-120"></a>
-<a id="__codelineno-2-121" name="__codelineno-2-121" href="#__codelineno-2-121"></a><span class="c"># Get Recycle Bin Items</span>
-<a id="__codelineno-2-122" name="__codelineno-2-122" href="#__codelineno-2-122"></a><span class="nv">$RecycleItemsRaw</span> <span class="p">=</span> <span class="nb">Get-PnPRecycleBinItem</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span>
-<a id="__codelineno-2-123" name="__codelineno-2-123" href="#__codelineno-2-123"></a>    <span class="nv">$localDeleted</span> <span class="p">=</span> <span class="nb">Get-LocalDeletedDate</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedDate</span>
-<a id="__codelineno-2-124" name="__codelineno-2-124" href="#__codelineno-2-124"></a>
-<a id="__codelineno-2-125" name="__codelineno-2-125" href="#__codelineno-2-125"></a>    <span class="nv">$dateMatch</span> <span class="p">=</span>
-<a id="__codelineno-2-126" name="__codelineno-2-126" href="#__codelineno-2-126"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">))</span> <span class="p">{</span>
-<a id="__codelineno-2-127" name="__codelineno-2-127" href="#__codelineno-2-127"></a>        <span class="nv">$localDeleted</span> <span class="o">-ge</span> <span class="nv">$Start</span> <span class="o">-and</span> <span class="nv">$localDeleted</span> <span class="o">-le</span> <span class="nv">$End</span>
-<a id="__codelineno-2-128" name="__codelineno-2-128" href="#__codelineno-2-128"></a>    <span class="p">}</span>
-<a id="__codelineno-2-129" name="__codelineno-2-129" href="#__codelineno-2-129"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">))</span> <span class="p">{</span>
-<a id="__codelineno-2-130" name="__codelineno-2-130" href="#__codelineno-2-130"></a>        <span class="nv">$localDeleted</span> <span class="o">-ge</span> <span class="nv">$Start</span>
-<a id="__codelineno-2-131" name="__codelineno-2-131" href="#__codelineno-2-131"></a>    <span class="p">}</span>
-<a id="__codelineno-2-132" name="__codelineno-2-132" href="#__codelineno-2-132"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">))</span> <span class="p">{</span>
-<a id="__codelineno-2-133" name="__codelineno-2-133" href="#__codelineno-2-133"></a>        <span class="nv">$localDeleted</span> <span class="o">-le</span> <span class="nv">$End</span>
-<a id="__codelineno-2-134" name="__codelineno-2-134" href="#__codelineno-2-134"></a>    <span class="p">}</span>
-<a id="__codelineno-2-135" name="__codelineno-2-135" href="#__codelineno-2-135"></a>    <span class="k">else</span> <span class="p">{</span>
-<a id="__codelineno-2-136" name="__codelineno-2-136" href="#__codelineno-2-136"></a>        <span class="nv">$true</span>
-<a id="__codelineno-2-137" name="__codelineno-2-137" href="#__codelineno-2-137"></a>    <span class="p">}</span>
-<a id="__codelineno-2-138" name="__codelineno-2-138" href="#__codelineno-2-138"></a>
-<a id="__codelineno-2-139" name="__codelineno-2-139" href="#__codelineno-2-139"></a>    <span class="nv">$deletedByMatch</span> <span class="p">=</span>
-<a id="__codelineno-2-140" name="__codelineno-2-140" href="#__codelineno-2-140"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;DeletedBy&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$DeletedBy</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-141" name="__codelineno-2-141" href="#__codelineno-2-141"></a>        <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedByEmail</span> <span class="o">-eq</span> <span class="nv">$DeletedBy</span>
-<a id="__codelineno-2-142" name="__codelineno-2-142" href="#__codelineno-2-142"></a>    <span class="p">}</span>
-<a id="__codelineno-2-143" name="__codelineno-2-143" href="#__codelineno-2-143"></a>    <span class="k">else</span> <span class="p">{</span>
-<a id="__codelineno-2-144" name="__codelineno-2-144" href="#__codelineno-2-144"></a>        <span class="nv">$true</span>
-<a id="__codelineno-2-145" name="__codelineno-2-145" href="#__codelineno-2-145"></a>    <span class="p">}</span>
-<a id="__codelineno-2-146" name="__codelineno-2-146" href="#__codelineno-2-146"></a>
-<a id="__codelineno-2-147" name="__codelineno-2-147" href="#__codelineno-2-147"></a>    <span class="nv">$dateMatch</span> <span class="o">-and</span> <span class="nv">$deletedByMatch</span>
-<a id="__codelineno-2-148" name="__codelineno-2-148" href="#__codelineno-2-148"></a><span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">DirName</span><span class="p">,</span> <span class="n">LeafName</span><span class="p">,</span> <span class="n">DeletedByEmail</span><span class="p">,</span> <span class="n">DeletedDate</span><span class="p">,</span> <span class="n">DeletedDateLocalFormatted</span><span class="p">,</span> <span class="n">ItemType</span><span class="p">,</span> <span class="n">AuthorEmail</span><span class="p">,</span> <span class="n">ItemState</span><span class="p">,</span> <span class="n">Id</span>
+<a id="__codelineno-2-120" name="__codelineno-2-120" href="#__codelineno-2-120"></a><span class="c"># Get Recycle Bin Items</span>
+<a id="__codelineno-2-121" name="__codelineno-2-121" href="#__codelineno-2-121"></a><span class="nv">$RecycleItemsRaw</span> <span class="p">=</span> <span class="nb">Get-PnPRecycleBinItem</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span>
+<a id="__codelineno-2-122" name="__codelineno-2-122" href="#__codelineno-2-122"></a>    <span class="nv">$localDeleted</span> <span class="p">=</span> <span class="nb">Get-LocalDeletedDate</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedDate</span>
+<a id="__codelineno-2-123" name="__codelineno-2-123" href="#__codelineno-2-123"></a>
+<a id="__codelineno-2-124" name="__codelineno-2-124" href="#__codelineno-2-124"></a>    <span class="nv">$dateMatch</span> <span class="p">=</span>
+<a id="__codelineno-2-125" name="__codelineno-2-125" href="#__codelineno-2-125"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">))</span> <span class="p">{</span>
+<a id="__codelineno-2-126" name="__codelineno-2-126" href="#__codelineno-2-126"></a>        <span class="nv">$localDeleted</span> <span class="o">-ge</span> <span class="nv">$Start</span> <span class="o">-and</span> <span class="nv">$localDeleted</span> <span class="o">-le</span> <span class="nv">$End</span>
+<a id="__codelineno-2-127" name="__codelineno-2-127" href="#__codelineno-2-127"></a>    <span class="p">}</span>
+<a id="__codelineno-2-128" name="__codelineno-2-128" href="#__codelineno-2-128"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;Start&#39;</span><span class="p">))</span> <span class="p">{</span>
+<a id="__codelineno-2-129" name="__codelineno-2-129" href="#__codelineno-2-129"></a>        <span class="nv">$localDeleted</span> <span class="o">-ge</span> <span class="nv">$Start</span>
+<a id="__codelineno-2-130" name="__codelineno-2-130" href="#__codelineno-2-130"></a>    <span class="p">}</span>
+<a id="__codelineno-2-131" name="__codelineno-2-131" href="#__codelineno-2-131"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;End&#39;</span><span class="p">))</span> <span class="p">{</span>
+<a id="__codelineno-2-132" name="__codelineno-2-132" href="#__codelineno-2-132"></a>        <span class="nv">$localDeleted</span> <span class="o">-le</span> <span class="nv">$End</span>
+<a id="__codelineno-2-133" name="__codelineno-2-133" href="#__codelineno-2-133"></a>    <span class="p">}</span>
+<a id="__codelineno-2-134" name="__codelineno-2-134" href="#__codelineno-2-134"></a>    <span class="k">else</span> <span class="p">{</span>
+<a id="__codelineno-2-135" name="__codelineno-2-135" href="#__codelineno-2-135"></a>        <span class="nv">$true</span>
+<a id="__codelineno-2-136" name="__codelineno-2-136" href="#__codelineno-2-136"></a>    <span class="p">}</span>
+<a id="__codelineno-2-137" name="__codelineno-2-137" href="#__codelineno-2-137"></a>
+<a id="__codelineno-2-138" name="__codelineno-2-138" href="#__codelineno-2-138"></a>    <span class="nv">$deletedByMatch</span> <span class="p">=</span>
+<a id="__codelineno-2-139" name="__codelineno-2-139" href="#__codelineno-2-139"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$PSBoundParameters</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="s1">&#39;DeletedBy&#39;</span><span class="p">)</span> <span class="o">-and</span> <span class="nv">$DeletedBy</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-140" name="__codelineno-2-140" href="#__codelineno-2-140"></a>        <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedByEmail</span> <span class="o">-eq</span> <span class="nv">$DeletedBy</span>
+<a id="__codelineno-2-141" name="__codelineno-2-141" href="#__codelineno-2-141"></a>    <span class="p">}</span>
+<a id="__codelineno-2-142" name="__codelineno-2-142" href="#__codelineno-2-142"></a>    <span class="k">else</span> <span class="p">{</span>
+<a id="__codelineno-2-143" name="__codelineno-2-143" href="#__codelineno-2-143"></a>        <span class="nv">$true</span>
+<a id="__codelineno-2-144" name="__codelineno-2-144" href="#__codelineno-2-144"></a>    <span class="p">}</span>
+<a id="__codelineno-2-145" name="__codelineno-2-145" href="#__codelineno-2-145"></a>
+<a id="__codelineno-2-146" name="__codelineno-2-146" href="#__codelineno-2-146"></a>    <span class="nv">$dateMatch</span> <span class="o">-and</span> <span class="nv">$deletedByMatch</span>
+<a id="__codelineno-2-147" name="__codelineno-2-147" href="#__codelineno-2-147"></a><span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">DirName</span><span class="p">,</span> <span class="n">LeafName</span><span class="p">,</span> <span class="n">DeletedByEmail</span><span class="p">,</span> <span class="n">DeletedDate</span><span class="p">,</span> <span class="n">DeletedDateLocalFormatted</span><span class="p">,</span> <span class="n">ItemType</span><span class="p">,</span> <span class="n">AuthorEmail</span><span class="p">,</span> <span class="n">ItemState</span><span class="p">,</span> <span class="n">Id</span>
+<a id="__codelineno-2-148" name="__codelineno-2-148" href="#__codelineno-2-148"></a>
 <a id="__codelineno-2-149" name="__codelineno-2-149" href="#__codelineno-2-149"></a>
-<a id="__codelineno-2-150" name="__codelineno-2-150" href="#__codelineno-2-150"></a>
-<a id="__codelineno-2-151" name="__codelineno-2-151" href="#__codelineno-2-151"></a><span class="c"># Build DeletedItem without the site prefix, add Order + Site + RecycleId</span>
-<a id="__codelineno-2-152" name="__codelineno-2-152" href="#__codelineno-2-152"></a><span class="nv">$RecycleItems</span> <span class="p">=</span> <span class="nv">$RecycleItemsRaw</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
-<a id="__codelineno-2-153" name="__codelineno-2-153" href="#__codelineno-2-153"></a>    <span class="nv">$dir</span> <span class="p">=</span> <span class="nb">Remove-SitePrefix</span> <span class="n">-Path</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DirName</span>
-<a id="__codelineno-2-154" name="__codelineno-2-154" href="#__codelineno-2-154"></a>    <span class="nv">$leaf</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">LeafName</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
-<a id="__codelineno-2-155" name="__codelineno-2-155" href="#__codelineno-2-155"></a>
-<a id="__codelineno-2-156" name="__codelineno-2-156" href="#__codelineno-2-156"></a>    <span class="nv">$deletedItem</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$dir</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$leaf</span> <span class="p">}</span>
-<a id="__codelineno-2-157" name="__codelineno-2-157" href="#__codelineno-2-157"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$dir</span> <span class="o">-eq</span> <span class="nv">$leaf</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$dir</span> <span class="p">}</span>
-<a id="__codelineno-2-158" name="__codelineno-2-158" href="#__codelineno-2-158"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$dir</span> <span class="o">-match</span> <span class="s1">&#39;/$&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;$dir$leaf&quot;</span> <span class="p">}</span>
-<a id="__codelineno-2-159" name="__codelineno-2-159" href="#__codelineno-2-159"></a>    <span class="k">else</span> <span class="p">{</span> <span class="s2">&quot;$dir/$leaf&quot;</span> <span class="p">}</span>
-<a id="__codelineno-2-160" name="__codelineno-2-160" href="#__codelineno-2-160"></a>
-<a id="__codelineno-2-161" name="__codelineno-2-161" href="#__codelineno-2-161"></a>    <span class="c"># Order = path depth - 1 (min 1). Same depth =&gt; same Order value (by design).</span>
-<a id="__codelineno-2-162" name="__codelineno-2-162" href="#__codelineno-2-162"></a>    <span class="nv">$depth</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$deletedItem</span> <span class="n">-split</span> <span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="n">Count</span>
-<a id="__codelineno-2-163" name="__codelineno-2-163" href="#__codelineno-2-163"></a>    <span class="nv">$order</span> <span class="p">=</span> <span class="no">[Math]</span><span class="p">::</span><span class="n">Max</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> <span class="nv">$depth</span> <span class="p">-</span> <span class="n">1</span><span class="p">)</span>
-<a id="__codelineno-2-164" name="__codelineno-2-164" href="#__codelineno-2-164"></a>
-<a id="__codelineno-2-165" name="__codelineno-2-165" href="#__codelineno-2-165"></a>    <span class="no">[pscustomobject]</span><span class="p">@{</span>
-<a id="__codelineno-2-166" name="__codelineno-2-166" href="#__codelineno-2-166"></a>        <span class="n">DeletedItem</span>               <span class="p">=</span> <span class="nv">$deletedItem</span>                 <span class="c"># no sites/SiteName prefix here</span>
-<a id="__codelineno-2-167" name="__codelineno-2-167" href="#__codelineno-2-167"></a>        <span class="n">Order</span>                     <span class="p">=</span> <span class="nv">$order</span>
-<a id="__codelineno-2-168" name="__codelineno-2-168" href="#__codelineno-2-168"></a>        <span class="n">RecycleId</span>                 <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Id</span>
-<a id="__codelineno-2-169" name="__codelineno-2-169" href="#__codelineno-2-169"></a>        <span class="n">DeletedByEmail</span>            <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedByEmail</span>
-<a id="__codelineno-2-170" name="__codelineno-2-170" href="#__codelineno-2-170"></a>        <span class="n">DeletedDateLocalFormatted</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedDateLocalFormatted</span>
-<a id="__codelineno-2-171" name="__codelineno-2-171" href="#__codelineno-2-171"></a>        <span class="n">ItemType</span>                  <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemType</span>
-<a id="__codelineno-2-172" name="__codelineno-2-172" href="#__codelineno-2-172"></a>        <span class="n">AuthorEmail</span>               <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">AuthorEmail</span>
-<a id="__codelineno-2-173" name="__codelineno-2-173" href="#__codelineno-2-173"></a>        <span class="n">ItemState</span>                 <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemState</span>
-<a id="__codelineno-2-174" name="__codelineno-2-174" href="#__codelineno-2-174"></a>        <span class="n">Site</span>                      <span class="p">=</span> <span class="nv">$siteName</span>
-<a id="__codelineno-2-175" name="__codelineno-2-175" href="#__codelineno-2-175"></a>    <span class="p">}</span>
-<a id="__codelineno-2-176" name="__codelineno-2-176" href="#__codelineno-2-176"></a><span class="p">}</span>
-<a id="__codelineno-2-177" name="__codelineno-2-177" href="#__codelineno-2-177"></a>
-<a id="__codelineno-2-178" name="__codelineno-2-178" href="#__codelineno-2-178"></a><span class="c"># Summary: IsDeleted = Yes/No; ChildCount excludes the top-level folder itself</span>
-<a id="__codelineno-2-179" name="__codelineno-2-179" href="#__codelineno-2-179"></a><span class="nv">$ChildCounts</span> <span class="p">=</span> <span class="p">@{}</span>
-<a id="__codelineno-2-180" name="__codelineno-2-180" href="#__codelineno-2-180"></a><span class="nv">$TopDeleted</span> <span class="p">=</span> <span class="p">@{}</span>
-<a id="__codelineno-2-181" name="__codelineno-2-181" href="#__codelineno-2-181"></a>
-<a id="__codelineno-2-182" name="__codelineno-2-182" href="#__codelineno-2-182"></a><span class="nv">$RecycleItems</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
-<a id="__codelineno-2-183" name="__codelineno-2-183" href="#__codelineno-2-183"></a>    <span class="nv">$parts</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="n">-split</span> <span class="s1">&#39;/&#39;</span>
-<a id="__codelineno-2-184" name="__codelineno-2-184" href="#__codelineno-2-184"></a>    <span class="c"># top = first two segments of path (post-strip), or the single segment if there&#39;s only one</span>
-<a id="__codelineno-2-185" name="__codelineno-2-185" href="#__codelineno-2-185"></a>    <span class="nv">$top</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$parts</span><span class="p">.</span><span class="n">Count</span> <span class="o">-gt</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;</span><span class="p">$(</span><span class="nv">$parts</span><span class="p">[</span><span class="n">0</span><span class="p">])</span><span class="s2">/</span><span class="p">$(</span><span class="nv">$parts</span><span class="p">[</span><span class="n">1</span><span class="p">])</span><span class="s2">&quot;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="p">}</span>
-<a id="__codelineno-2-186" name="__codelineno-2-186" href="#__codelineno-2-186"></a>
-<a id="__codelineno-2-187" name="__codelineno-2-187" href="#__codelineno-2-187"></a>    <span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$ChildCounts</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="nv">$top</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span> <span class="p">}</span>
-<a id="__codelineno-2-188" name="__codelineno-2-188" href="#__codelineno-2-188"></a>    <span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$TopDeleted</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="nv">$top</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="nv">$false</span> <span class="p">}</span>
-<a id="__codelineno-2-189" name="__codelineno-2-189" href="#__codelineno-2-189"></a>
-<a id="__codelineno-2-190" name="__codelineno-2-190" href="#__codelineno-2-190"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="o">-eq</span> <span class="nv">$top</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemType</span> <span class="o">-eq</span> <span class="s1">&#39;Folder&#39;</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-191" name="__codelineno-2-191" href="#__codelineno-2-191"></a>        <span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="nv">$true</span>
-<a id="__codelineno-2-192" name="__codelineno-2-192" href="#__codelineno-2-192"></a>    <span class="p">}</span>
-<a id="__codelineno-2-193" name="__codelineno-2-193" href="#__codelineno-2-193"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="o">-like</span> <span class="p">(</span><span class="nv">$top</span> <span class="p">+</span> <span class="s1">&#39;/*&#39;</span><span class="p">))</span> <span class="p">{</span>
-<a id="__codelineno-2-194" name="__codelineno-2-194" href="#__codelineno-2-194"></a>        <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$top</span><span class="p">]++</span>
-<a id="__codelineno-2-195" name="__codelineno-2-195" href="#__codelineno-2-195"></a>    <span class="p">}</span>
-<a id="__codelineno-2-196" name="__codelineno-2-196" href="#__codelineno-2-196"></a><span class="p">}</span>
-<a id="__codelineno-2-197" name="__codelineno-2-197" href="#__codelineno-2-197"></a>
-<a id="__codelineno-2-198" name="__codelineno-2-198" href="#__codelineno-2-198"></a><span class="nv">$AllTops</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$ChildCounts</span><span class="p">.</span><span class="n">Keys</span> <span class="p">+</span> <span class="nv">$TopDeleted</span><span class="p">.</span><span class="n">Keys</span><span class="p">)</span> <span class="p">|</span> <span class="nb">Sort-Object</span> <span class="n">-Unique</span>
-<a id="__codelineno-2-199" name="__codelineno-2-199" href="#__codelineno-2-199"></a><span class="nv">$Summary</span> <span class="p">=</span> <span class="nv">$AllTops</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
-<a id="__codelineno-2-200" name="__codelineno-2-200" href="#__codelineno-2-200"></a>    <span class="nv">$folder</span> <span class="p">=</span> <span class="nv">$_</span>
-<a id="__codelineno-2-201" name="__codelineno-2-201" href="#__codelineno-2-201"></a>    <span class="no">[pscustomobject]</span><span class="p">@{</span>
-<a id="__codelineno-2-202" name="__codelineno-2-202" href="#__codelineno-2-202"></a>        <span class="n">Site</span>       <span class="p">=</span> <span class="nv">$siteName</span>
-<a id="__codelineno-2-203" name="__codelineno-2-203" href="#__codelineno-2-203"></a>        <span class="n">Folder</span>     <span class="p">=</span> <span class="nv">$folder</span>
-<a id="__codelineno-2-204" name="__codelineno-2-204" href="#__codelineno-2-204"></a>        <span class="n">IsDeleted</span>  <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$folder</span><span class="p">])</span> <span class="p">{</span> <span class="s1">&#39;Yes&#39;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="s1">&#39;No&#39;</span> <span class="p">}</span>
-<a id="__codelineno-2-205" name="__codelineno-2-205" href="#__codelineno-2-205"></a>        <span class="n">ChildCount</span> <span class="p">=</span> <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$folder</span><span class="p">]</span>
-<a id="__codelineno-2-206" name="__codelineno-2-206" href="#__codelineno-2-206"></a>    <span class="p">}</span>
-<a id="__codelineno-2-207" name="__codelineno-2-207" href="#__codelineno-2-207"></a><span class="p">}</span>
-<a id="__codelineno-2-208" name="__codelineno-2-208" href="#__codelineno-2-208"></a>
-<a id="__codelineno-2-209" name="__codelineno-2-209" href="#__codelineno-2-209"></a><span class="c"># Export to Excel</span>
-<a id="__codelineno-2-210" name="__codelineno-2-210" href="#__codelineno-2-210"></a><span class="nv">$Summary</span>      <span class="p">|</span> <span class="nb">Export-Excel</span> <span class="n">-Path</span> <span class="nv">$Out</span> <span class="n">-WorksheetName</span> <span class="s2">&quot;Summary&quot;</span> <span class="n">-AutoSize</span> <span class="n">-FreezeTopRow</span> <span class="n">-TableName</span> <span class="s2">&quot;Summary&quot;</span> <span class="n">-TableStyle</span> <span class="n">Medium2</span>
-<a id="__codelineno-2-211" name="__codelineno-2-211" href="#__codelineno-2-211"></a><span class="nv">$RecycleItems</span> <span class="p">|</span> <span class="nb">Export-Excel</span> <span class="n">-Path</span> <span class="nv">$Out</span> <span class="n">-WorksheetName</span> <span class="s2">&quot;Details&quot;</span> <span class="n">-AutoSize</span> <span class="n">-FreezeTopRow</span> <span class="n">-TableName</span> <span class="s2">&quot;Details&quot;</span> <span class="n">-TableStyle</span> <span class="n">Medium2</span>
-<a id="__codelineno-2-212" name="__codelineno-2-212" href="#__codelineno-2-212"></a>
-<a id="__codelineno-2-213" name="__codelineno-2-213" href="#__codelineno-2-213"></a><span class="n">Log</span> <span class="s2">&quot;Exported report: $Out&quot;</span> <span class="n">Green</span>
-<a id="__codelineno-2-214" name="__codelineno-2-214" href="#__codelineno-2-214"></a>
-<a id="__codelineno-2-215" name="__codelineno-2-215" href="#__codelineno-2-215"></a><span class="nv">$answer</span> <span class="p">=</span> <span class="nb">Read-Host</span> <span class="s2">&quot;Open the report now? [Y/n]&quot;</span>
-<a id="__codelineno-2-216" name="__codelineno-2-216" href="#__codelineno-2-216"></a><span class="k">if</span> <span class="p">(</span><span class="nv">$answer</span> <span class="o">-eq</span> <span class="s1">&#39;&#39;</span> <span class="o">-or</span> <span class="nv">$answer</span> <span class="o">-match</span> <span class="s1">&#39;^y&#39;</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-2-217" name="__codelineno-2-217" href="#__codelineno-2-217"></a>    <span class="nb">Start-Process</span> <span class="nv">$Out</span>
-<a id="__codelineno-2-218" name="__codelineno-2-218" href="#__codelineno-2-218"></a><span class="p">}</span>
+<a id="__codelineno-2-150" name="__codelineno-2-150" href="#__codelineno-2-150"></a><span class="c"># Build DeletedItem without the site prefix, add Order + Site + RecycleId</span>
+<a id="__codelineno-2-151" name="__codelineno-2-151" href="#__codelineno-2-151"></a><span class="nv">$RecycleItems</span> <span class="p">=</span> <span class="nv">$RecycleItemsRaw</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
+<a id="__codelineno-2-152" name="__codelineno-2-152" href="#__codelineno-2-152"></a>    <span class="nv">$dir</span> <span class="p">=</span> <span class="nb">Remove-SitePrefix</span> <span class="n">-Path</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DirName</span>
+<a id="__codelineno-2-153" name="__codelineno-2-153" href="#__codelineno-2-153"></a>    <span class="nv">$leaf</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">LeafName</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-154" name="__codelineno-2-154" href="#__codelineno-2-154"></a>
+<a id="__codelineno-2-155" name="__codelineno-2-155" href="#__codelineno-2-155"></a>    <span class="nv">$deletedItem</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="no">[string]</span><span class="p">::</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="nv">$dir</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$leaf</span> <span class="p">}</span>
+<a id="__codelineno-2-156" name="__codelineno-2-156" href="#__codelineno-2-156"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$dir</span> <span class="o">-eq</span> <span class="nv">$leaf</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$dir</span> <span class="p">}</span>
+<a id="__codelineno-2-157" name="__codelineno-2-157" href="#__codelineno-2-157"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$dir</span> <span class="o">-match</span> <span class="s1">&#39;/$&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;$dir$leaf&quot;</span> <span class="p">}</span>
+<a id="__codelineno-2-158" name="__codelineno-2-158" href="#__codelineno-2-158"></a>    <span class="k">else</span> <span class="p">{</span> <span class="s2">&quot;$dir/$leaf&quot;</span> <span class="p">}</span>
+<a id="__codelineno-2-159" name="__codelineno-2-159" href="#__codelineno-2-159"></a>
+<a id="__codelineno-2-160" name="__codelineno-2-160" href="#__codelineno-2-160"></a>    <span class="c"># Order = path depth - 1 (min 1). Same depth =&gt; same Order value (by design).</span>
+<a id="__codelineno-2-161" name="__codelineno-2-161" href="#__codelineno-2-161"></a>    <span class="nv">$depth</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$deletedItem</span> <span class="n">-split</span> <span class="s1">&#39;/&#39;</span><span class="p">).</span><span class="n">Count</span>
+<a id="__codelineno-2-162" name="__codelineno-2-162" href="#__codelineno-2-162"></a>    <span class="nv">$order</span> <span class="p">=</span> <span class="no">[Math]</span><span class="p">::</span><span class="n">Max</span><span class="p">(</span><span class="n">1</span><span class="p">,</span> <span class="nv">$depth</span> <span class="p">-</span> <span class="n">1</span><span class="p">)</span>
+<a id="__codelineno-2-163" name="__codelineno-2-163" href="#__codelineno-2-163"></a>
+<a id="__codelineno-2-164" name="__codelineno-2-164" href="#__codelineno-2-164"></a>    <span class="no">[pscustomobject]</span><span class="p">@{</span>
+<a id="__codelineno-2-165" name="__codelineno-2-165" href="#__codelineno-2-165"></a>        <span class="n">DeletedItem</span>               <span class="p">=</span> <span class="nv">$deletedItem</span>                 <span class="c"># no sites/SiteName prefix here</span>
+<a id="__codelineno-2-166" name="__codelineno-2-166" href="#__codelineno-2-166"></a>        <span class="n">Order</span>                     <span class="p">=</span> <span class="nv">$order</span>
+<a id="__codelineno-2-167" name="__codelineno-2-167" href="#__codelineno-2-167"></a>        <span class="n">RecycleId</span>                 <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Id</span>
+<a id="__codelineno-2-168" name="__codelineno-2-168" href="#__codelineno-2-168"></a>        <span class="n">DeletedByEmail</span>            <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedByEmail</span>
+<a id="__codelineno-2-169" name="__codelineno-2-169" href="#__codelineno-2-169"></a>        <span class="n">DeletedDateLocalFormatted</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedDateLocalFormatted</span>
+<a id="__codelineno-2-170" name="__codelineno-2-170" href="#__codelineno-2-170"></a>        <span class="n">ItemType</span>                  <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemType</span>
+<a id="__codelineno-2-171" name="__codelineno-2-171" href="#__codelineno-2-171"></a>        <span class="n">AuthorEmail</span>               <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">AuthorEmail</span>
+<a id="__codelineno-2-172" name="__codelineno-2-172" href="#__codelineno-2-172"></a>        <span class="n">ItemState</span>                 <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemState</span>
+<a id="__codelineno-2-173" name="__codelineno-2-173" href="#__codelineno-2-173"></a>        <span class="n">Site</span>                      <span class="p">=</span> <span class="nv">$siteName</span>
+<a id="__codelineno-2-174" name="__codelineno-2-174" href="#__codelineno-2-174"></a>    <span class="p">}</span>
+<a id="__codelineno-2-175" name="__codelineno-2-175" href="#__codelineno-2-175"></a><span class="p">}</span>
+<a id="__codelineno-2-176" name="__codelineno-2-176" href="#__codelineno-2-176"></a>
+<a id="__codelineno-2-177" name="__codelineno-2-177" href="#__codelineno-2-177"></a><span class="c"># Summary: IsDeleted = Yes/No; ChildCount excludes the top-level folder itself</span>
+<a id="__codelineno-2-178" name="__codelineno-2-178" href="#__codelineno-2-178"></a><span class="nv">$ChildCounts</span> <span class="p">=</span> <span class="p">@{}</span>
+<a id="__codelineno-2-179" name="__codelineno-2-179" href="#__codelineno-2-179"></a><span class="nv">$TopDeleted</span> <span class="p">=</span> <span class="p">@{}</span>
+<a id="__codelineno-2-180" name="__codelineno-2-180" href="#__codelineno-2-180"></a>
+<a id="__codelineno-2-181" name="__codelineno-2-181" href="#__codelineno-2-181"></a><span class="nv">$RecycleItems</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
+<a id="__codelineno-2-182" name="__codelineno-2-182" href="#__codelineno-2-182"></a>    <span class="nv">$parts</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="n">-split</span> <span class="s1">&#39;/&#39;</span>
+<a id="__codelineno-2-183" name="__codelineno-2-183" href="#__codelineno-2-183"></a>    <span class="c"># top = first two segments of path (post-strip), or the single segment if there&#39;s only one</span>
+<a id="__codelineno-2-184" name="__codelineno-2-184" href="#__codelineno-2-184"></a>    <span class="nv">$top</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$parts</span><span class="p">.</span><span class="n">Count</span> <span class="o">-gt</span> <span class="n">1</span><span class="p">)</span> <span class="p">{</span> <span class="s2">&quot;</span><span class="p">$(</span><span class="nv">$parts</span><span class="p">[</span><span class="n">0</span><span class="p">])</span><span class="s2">/</span><span class="p">$(</span><span class="nv">$parts</span><span class="p">[</span><span class="n">1</span><span class="p">])</span><span class="s2">&quot;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="p">}</span>
+<a id="__codelineno-2-185" name="__codelineno-2-185" href="#__codelineno-2-185"></a>
+<a id="__codelineno-2-186" name="__codelineno-2-186" href="#__codelineno-2-186"></a>    <span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$ChildCounts</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="nv">$top</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="n">0</span> <span class="p">}</span>
+<a id="__codelineno-2-187" name="__codelineno-2-187" href="#__codelineno-2-187"></a>    <span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$TopDeleted</span><span class="p">.</span><span class="n">ContainsKey</span><span class="p">(</span><span class="nv">$top</span><span class="p">))</span> <span class="p">{</span> <span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="nv">$false</span> <span class="p">}</span>
+<a id="__codelineno-2-188" name="__codelineno-2-188" href="#__codelineno-2-188"></a>
+<a id="__codelineno-2-189" name="__codelineno-2-189" href="#__codelineno-2-189"></a>    <span class="k">if</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="o">-eq</span> <span class="nv">$top</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="n">ItemType</span> <span class="o">-eq</span> <span class="s1">&#39;Folder&#39;</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-190" name="__codelineno-2-190" href="#__codelineno-2-190"></a>        <span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$top</span><span class="p">]</span> <span class="p">=</span> <span class="nv">$true</span>
+<a id="__codelineno-2-191" name="__codelineno-2-191" href="#__codelineno-2-191"></a>    <span class="p">}</span>
+<a id="__codelineno-2-192" name="__codelineno-2-192" href="#__codelineno-2-192"></a>    <span class="k">elseif</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="n">DeletedItem</span> <span class="o">-like</span> <span class="p">(</span><span class="nv">$top</span> <span class="p">+</span> <span class="s1">&#39;/*&#39;</span><span class="p">))</span> <span class="p">{</span>
+<a id="__codelineno-2-193" name="__codelineno-2-193" href="#__codelineno-2-193"></a>        <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$top</span><span class="p">]++</span>
+<a id="__codelineno-2-194" name="__codelineno-2-194" href="#__codelineno-2-194"></a>    <span class="p">}</span>
+<a id="__codelineno-2-195" name="__codelineno-2-195" href="#__codelineno-2-195"></a><span class="p">}</span>
+<a id="__codelineno-2-196" name="__codelineno-2-196" href="#__codelineno-2-196"></a>
+<a id="__codelineno-2-197" name="__codelineno-2-197" href="#__codelineno-2-197"></a><span class="nv">$AllTops</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$ChildCounts</span><span class="p">.</span><span class="n">Keys</span> <span class="p">+</span> <span class="nv">$TopDeleted</span><span class="p">.</span><span class="n">Keys</span><span class="p">)</span> <span class="p">|</span> <span class="nb">Sort-Object</span> <span class="n">-Unique</span>
+<a id="__codelineno-2-198" name="__codelineno-2-198" href="#__codelineno-2-198"></a><span class="nv">$Summary</span> <span class="p">=</span> <span class="nv">$AllTops</span> <span class="p">|</span> <span class="k">ForEach</span><span class="n">-Object</span> <span class="p">{</span>
+<a id="__codelineno-2-199" name="__codelineno-2-199" href="#__codelineno-2-199"></a>    <span class="nv">$folder</span> <span class="p">=</span> <span class="nv">$_</span>
+<a id="__codelineno-2-200" name="__codelineno-2-200" href="#__codelineno-2-200"></a>    <span class="no">[pscustomobject]</span><span class="p">@{</span>
+<a id="__codelineno-2-201" name="__codelineno-2-201" href="#__codelineno-2-201"></a>        <span class="n">Site</span>       <span class="p">=</span> <span class="nv">$siteName</span>
+<a id="__codelineno-2-202" name="__codelineno-2-202" href="#__codelineno-2-202"></a>        <span class="n">Folder</span>     <span class="p">=</span> <span class="nv">$folder</span>
+<a id="__codelineno-2-203" name="__codelineno-2-203" href="#__codelineno-2-203"></a>        <span class="n">IsDeleted</span>  <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$TopDeleted</span><span class="p">[</span><span class="nv">$folder</span><span class="p">])</span> <span class="p">{</span> <span class="s1">&#39;Yes&#39;</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="s1">&#39;No&#39;</span> <span class="p">}</span>
+<a id="__codelineno-2-204" name="__codelineno-2-204" href="#__codelineno-2-204"></a>        <span class="n">ChildCount</span> <span class="p">=</span> <span class="nv">$ChildCounts</span><span class="p">[</span><span class="nv">$folder</span><span class="p">]</span>
+<a id="__codelineno-2-205" name="__codelineno-2-205" href="#__codelineno-2-205"></a>    <span class="p">}</span>
+<a id="__codelineno-2-206" name="__codelineno-2-206" href="#__codelineno-2-206"></a><span class="p">}</span>
+<a id="__codelineno-2-207" name="__codelineno-2-207" href="#__codelineno-2-207"></a>
+<a id="__codelineno-2-208" name="__codelineno-2-208" href="#__codelineno-2-208"></a><span class="c"># Export to Excel</span>
+<a id="__codelineno-2-209" name="__codelineno-2-209" href="#__codelineno-2-209"></a><span class="nv">$Summary</span>      <span class="p">|</span> <span class="nb">Export-Excel</span> <span class="n">-Path</span> <span class="nv">$Out</span> <span class="n">-WorksheetName</span> <span class="s2">&quot;Summary&quot;</span> <span class="n">-AutoSize</span> <span class="n">-FreezeTopRow</span> <span class="n">-TableName</span> <span class="s2">&quot;Summary&quot;</span> <span class="n">-TableStyle</span> <span class="n">Medium2</span>
+<a id="__codelineno-2-210" name="__codelineno-2-210" href="#__codelineno-2-210"></a><span class="nv">$RecycleItems</span> <span class="p">|</span> <span class="nb">Export-Excel</span> <span class="n">-Path</span> <span class="nv">$Out</span> <span class="n">-WorksheetName</span> <span class="s2">&quot;Details&quot;</span> <span class="n">-AutoSize</span> <span class="n">-FreezeTopRow</span> <span class="n">-TableName</span> <span class="s2">&quot;Details&quot;</span> <span class="n">-TableStyle</span> <span class="n">Medium2</span>
+<a id="__codelineno-2-211" name="__codelineno-2-211" href="#__codelineno-2-211"></a>
+<a id="__codelineno-2-212" name="__codelineno-2-212" href="#__codelineno-2-212"></a><span class="n">Log</span> <span class="s2">&quot;Exported report: $Out&quot;</span> <span class="n">Green</span>
+<a id="__codelineno-2-213" name="__codelineno-2-213" href="#__codelineno-2-213"></a>
+<a id="__codelineno-2-214" name="__codelineno-2-214" href="#__codelineno-2-214"></a><span class="nv">$answer</span> <span class="p">=</span> <span class="nb">Read-Host</span> <span class="s2">&quot;Open the report now? [Y/n]&quot;</span>
+<a id="__codelineno-2-215" name="__codelineno-2-215" href="#__codelineno-2-215"></a><span class="k">if</span> <span class="p">(</span><span class="nv">$answer</span> <span class="o">-eq</span> <span class="s1">&#39;&#39;</span> <span class="o">-or</span> <span class="nv">$answer</span> <span class="o">-match</span> <span class="s1">&#39;^y&#39;</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-2-216" name="__codelineno-2-216" href="#__codelineno-2-216"></a>    <span class="nb">Start-Process</span> <span class="nv">$Out</span>
+<a id="__codelineno-2-217" name="__codelineno-2-217" href="#__codelineno-2-217"></a><span class="p">}</span>
 </code></pre></div>
 
 
